@@ -1,4 +1,5 @@
 from fastapi import APIRouter,File,UploadFile
+from fastapi.responses import FileResponse
 import shutil
 
 
@@ -31,6 +32,28 @@ def get_upload(uploaded_file : UploadFile = File(...)):
         'path':path
     }
 
+@router.get('/download')
+def download_file(filename:str):
+    path = f"uploaded_files/{filename}"
+    return FileResponse(path,media_type='application/octet-stream',filename=filename)
 
+
+
+@router.post('/upload-profile')
+def upload_profilt(file:UploadFile = File(...)):
+    path = f"uploads/{file.filename}"
+
+    with open(path,'wb') as buffer:
+        shutil.copyfileobj(file.file,buffer)
+
+    return{
+     "filename": path,
+     "message": "File uploaded successfully."
+}
+
+@router.get('/download-profile/{filename}')
+def download_file(filename:str):
+    path = f"uploads/{filename}"
+    return FileResponse(path,media_type='application/jpeg',filename=filename)
 
 
