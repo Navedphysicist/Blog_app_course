@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException,status
+from fastapi import APIRouter, Depends, HTTPException,status,Form,UploadFile,File
 from schemas.user import UserBase,UserDisplay,UserPartial
 from sqlalchemy.orm import Session
 from db.database import get_db
@@ -112,3 +112,18 @@ def delete_user(id:int, db:Session = Depends(get_db)):
     db.delete(user)
     db.commit()
     return f"User with ID :{id} deleted successfully"
+
+
+@router.post('/register')
+def get_register(
+    username : str = Form(...,max_length=7),
+    email: str = Form(None),
+    age : int  = Form(..., gt=10,lt=99),
+    avtar : UploadFile = File(...)
+
+):
+    return {
+        'username' : username,
+        'email' : email,
+        'age':age,
+    }
